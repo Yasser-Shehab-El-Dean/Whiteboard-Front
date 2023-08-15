@@ -19,6 +19,8 @@ const config: Config = {
       white: "#fff",
       subText: "#636B7F",
       borderColor: "#CFD0D3",
+      primary: "#115FBB",
+      error: "#ff3333",
     },
     extend: {},
   },
