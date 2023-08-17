@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Session } from "next-auth";
 
-
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Please Provide Process.env.NEXTAUTH_SECRET environment Variables");
 }
@@ -42,17 +41,23 @@ export default NextAuth({
         console.log({ userData: user });
 
         if (user && user !== "Incorrect username or password") {
-          console.log("trueeeeeeeeeeeee");
-
+          console.log("successful Login");
           return user;
         } else {
-          console.log("faaaaaaaaaaaalse");
+          console.log("failed Login");
 
-          return null;
+          throw new Error(JSON.stringify({ errors: user, status: false }));
         }
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user, session }) {
+      console.log("jwt callback", { user, session, token });
+      return token;
+    },
+  },
 
   secret: process.env.NEXTAUTH_SECRET,
 

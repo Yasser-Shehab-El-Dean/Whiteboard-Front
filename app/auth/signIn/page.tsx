@@ -17,11 +17,14 @@ const LoginPage = () => {
   const bears = Auth((state: any) => state.bears);
 
   const router = useRouter();
+  const [error, setError] = useState("");
   const SignInSchema = Yup.object().shape({
     username: Yup.string().max(50, "Too Long!").required("Required"),
     password: Yup.string().max(50, "Too Long!").required("Required"),
     selectedOption: Yup.object().required("Please select an option"),
   });
+
+  console.log(bears);
 
   const customStyles = "w-full text-sm text-opacity-70 ";
   const customInputStyle =
@@ -42,18 +45,18 @@ const LoginPage = () => {
         const result = await signIn("credentials", {
           username: values.username,
           password: values.password,
-          redirect: true,
-          callbackUrl: "/",
+          redirect: false,
           // You can provide any additional data or options here
         });
+
         console.log({ result });
-        alert("sdas");
-        if (result?.error) {
-          // Handle login error
-          alert("error");
-        } else if (result?.ok) {
-          // Redirect to the home page on successful login
+
+        if (result?.ok) {
+          alert("LoggedIn Successful");
           router.push("/");
+        } else {
+          alert(result?.error);
+          setError("Incorrect username or password");
         }
       };
       handleLogin();
@@ -126,6 +129,7 @@ const LoginPage = () => {
                 </div>
               ) : null}
             </div>
+            {error ? <p className='text-error text-xs mb-5'>{error}</p> : ""}
             <Button
               type='submit'
               className='bg-primary text-white flex items-center px-5 py-2 rounded-md gap-2'
