@@ -24,7 +24,7 @@ const LoginPage = () => {
     selectedOption: Yup.object().required("Please select an option"),
   });
 
-  console.log(bears);
+  // console.log(bears);
 
   const customStyles = "w-full text-sm text-opacity-70 ";
   const customInputStyle =

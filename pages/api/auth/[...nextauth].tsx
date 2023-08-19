@@ -17,14 +17,14 @@ export default NextAuth({
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
 
-        const res = await fetch("https://sso2.apollonia.health/user/authenticate", {
+        const res = await fetch("https://dummyjson.com/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            UserName: credentials?.username,
-            Password: credentials?.password,
+            username: credentials?.username,
+            password: credentials?.password,
           }),
         });
 
@@ -40,7 +40,7 @@ export default NextAuth({
 
         console.log({ userData: user });
 
-        if (user && user !== "Incorrect username or password") {
+        if (user && user !== "Invalid credentials") {
           console.log("successful Login");
           return user;
         } else {
@@ -52,10 +52,24 @@ export default NextAuth({
     }),
   ],
 
+  session: {
+    strategy: "jwt",
+  },
+
   callbacks: {
     async jwt({ token, user, session }) {
       console.log("jwt callback", { user, session, token });
       return token;
+    },
+    async session({ token, user, session }) {
+      session.user = {
+        // @ts-ignore
+        firstName: token.firstName,
+        email: token.email, // Replace with the appropriate property from the token
+        // Replace with the appropriate property from the token
+      };
+
+      return session;
     },
   },
 
