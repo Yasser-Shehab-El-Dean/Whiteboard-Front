@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { Session } from "next-auth";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Please Provide Process.env.NEXTAUTH_SECRET environment Variables");
@@ -38,9 +38,9 @@ export default NextAuth({
           console.log(`Request failed with status: ${res.status}`);
         }
 
-        console.log({ userData: user });
+        console.log({ Login_Response: user });
 
-        if (user && user !== "Invalid credentials") {
+        if (user && user !== "Incorrect username or password") {
           console.log("successful Login");
           return user;
         } else {
@@ -57,17 +57,31 @@ export default NextAuth({
   },
 
   callbacks: {
-    async jwt({ token, user, session }) {
-      console.log("jwt callback", { user, session, token });
+    // async jwt({ token, account }) {
+    //   if (account) {
+    //     token = Object.assign({}, token, { access_token: account.access_token });
+    //     console.log(account);
+    //   }
+    //   console.log(token);
+    //   return token;
+    // },
+    async jwt({ token, user }) {
+      if (user) {
+        console.log("inside jwt callback", user);
+      }
+
       return token;
     },
-    async session({ token, user, session }) {
+
+    async session({ token, session }) {
       session.user = {
         // @ts-ignore
-        firstName: token.firstName,
+        token: token,
         email: token.email, // Replace with the appropriate property from the token
+        image: token.picture,
         // Replace with the appropriate property from the token
       };
+      console.log({ Token_Details: token, Session_Details: session });
 
       return session;
     },
